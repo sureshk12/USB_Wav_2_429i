@@ -125,7 +125,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint8_t playCount = 0;
-  char wavFileArray[3][10] = {WAV_FILE1, WAV_FILE2, WAV_FILE3};
+  char wavFileArray[3][15] = {WAV_FILE1, WAV_FILE2, WAV_FILE3};
   HAL_UART_Transmit(&huart1, (uint8_t*)"Hello world, this is Wave player\r\n", 30, 1000);
   while (1)
   {
@@ -151,13 +151,16 @@ int main(void)
         f_mount(&USBHFatFS, (const TCHAR*)USBHPath, 0);
         isSdCardMounted = 1;
       }
-      if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+
       {
-        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_14, GPIO_PIN_SET);
-        HAL_Delay(500);
-//        while(playCount < 3) {
-        	playCount ++;
-			wavPlayer_fileSelect(WAV_FILE3);
+        while(playCount < 3) {
+        	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_14, GPIO_PIN_SET);
+            HAL_Delay(500);
+
+			//wavPlayer_fileSelect(WAV_FILE3);
+			wavPlayer_fileSelect(wavFileArray[playCount]);
+
         	//wavPlayer_fileSelect(wavFileArray[playCount]);
 			wavPlayer_play();
 
@@ -187,9 +190,10 @@ int main(void)
 				}
 			  }
 			}
-//        }
-        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_13, GPIO_PIN_RESET);
-        HAL_Delay(1000);
+	        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_13, GPIO_PIN_RESET);
+	        playCount ++;
+	        HAL_Delay(1000);
+        }
       }
     }
   }
